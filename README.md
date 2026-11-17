@@ -44,8 +44,13 @@ choose so or don't have administrator rights, just for you. It adds K-MIDI to th
 list for `.kmt`, `.ins`, `.toml` and `.reabank` files, without making it the default program for any of them.
 Remove it from Settings > Apps.
 
-The installer isn't code-signed yet, so Windows SmartScreen may say it doesn't recognise it. Choose More info, then
-Run anyway.
+To use K-MIDI without installing it, download `K-MIDI-<version>-portable.zip` instead, unzip it anywhere (a USB
+drive, for example) and run `K-MIDI.exe` from the `K-MIDI-<version>` folder. K-MIDI keeps no settings and writes
+nothing to the registry, so to remove it, delete the folder. The portable version isn't added to the Start menu or
+the "Open with" list.
+
+K-MIDI isn't code-signed yet, so Windows SmartScreen may say it doesn't recognise the installer or the program.
+Choose More info, then Run anyway.
 
 ## Building
 
@@ -77,7 +82,7 @@ ctest --preset macos-tests
 
 The macOS version hasn't been built or tried with VoiceOver yet: see [Using K-MIDI on a Mac](#using-k-midi-on-a-mac).
 
-### Making the Windows installer
+### Making the Windows installer and portable zip
 
 The installer is made with [Inno Setup 6](https://jrsoftware.org/isinfo.php) (`winget install JRSoftware.InnoSetup`).
 In PowerShell, from the project folder:
@@ -88,16 +93,17 @@ In PowerShell, from the project folder:
 
 This configures, builds Release, runs the tests, collects `K-MIDI.exe` with the DLLs it uses and the Visual C++
 runtime in `build/windows-vs2022/stage` (`cmake --install`), and makes
-`build/windows-vs2022/installer/K-MIDI-<version>-setup.exe`. The version comes from `project(... VERSION ...)` in
+`build/windows-vs2022/installer/K-MIDI-<version>-setup.exe` and, from the same files,
+`build/windows-vs2022/installer/K-MIDI-<version>-portable.zip`. The version comes from `project(... VERSION ...)` in
 `CMakeLists.txt`; change it there (and in `vcpkg.json`) before making a new release. The installer script is
 `installer/K-MIDI.iss.in`, which CMake fills in when it configures.
 
-To publish a release, tag it and attach the installer:
+To publish a release, tag it and attach the installer and the portable zip:
 
 ```
 git tag v0.1.0
 git push origin v0.1.0
-gh release create v0.1.0 build\windows-vs2022\installer\K-MIDI-0.1.0-setup.exe --title "K-MIDI 0.1.0" --notes "..."
+gh release create v0.1.0 build\windows-vs2022\installer\K-MIDI-0.1.0-setup.exe build\windows-vs2022\installer\K-MIDI-0.1.0-portable.zip --title "K-MIDI 0.1.0" --notes "..."
 ```
 
 ### After moving or renaming the project folder
@@ -564,7 +570,7 @@ src/app/             the wxWidgets program
   Announce_mac.mm    macOS: VoiceOver announcements and accessible names
   Announce_generic.cpp    other platforms: does nothing
 tests/               tests and their instrument files
-installer/           the Windows installer: Inno Setup script and the PowerShell script that builds it
+installer/           the Windows installer and portable zip: Inno Setup script and the PowerShell script that builds them
 samples/kmt/         a template made by Komplete Kontrol, which the .kmt format was worked out from
 ```
 
