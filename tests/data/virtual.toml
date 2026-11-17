@@ -1,0 +1,9 @@
+[instrument]
+name = "Test Poly (Macros)"
+based_on = "test poly"
+
+[macros]
+0 = "Cutoff"
+1 = "resonance"
+9 = "Volume"
+10 = "No Such Parameter"

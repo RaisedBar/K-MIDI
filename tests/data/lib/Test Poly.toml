@@ -1,0 +1,29 @@
+# A test instrument in Asp's .toml format
+[instrument]
+name = "Test Poly"
+bank_select = "cc0"
+
+[[banks]]
+number = 1
+name = "User"
+presets = { 0 = "Warm Pad", 1 = "Bright Lead" }
+
+[presets]
+0 = "Init"
+
+[controllers]
+0 = "Bank Select"
+7 = { name = "Volume", default = 100 }
+74 = "Cutoff"
+71 = { name = "Resonance", range = [0, 100] }
+80 = "Chorus On/Off"
+81 = { name = "LFO Shape", range = [0, 4], values = "shapes" }
+82 = { name = "Sync", range = [0, 1], values = { 0 = "free", 1 = "synced" } }
+90 = "Reserved"
+
+[nrpns]
+1000 = { name = "Filter Envelope", range = [0, 164] }
+
+[value_lists.shapes]
+0 = "triangle"
+1 = "saw"

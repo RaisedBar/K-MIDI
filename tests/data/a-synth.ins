@@ -1,0 +1,73 @@
+; Test instrument definitions covering the .ins features Asp uses
+
+.Patch Names
+
+[General MIDI]
+0=Acoustic Grand Piano
+1=Bright Acoustic Piano
+2=Electric Grand Piano
+
+[Synth Factory]
+0=Fat Bass
+1=Thin Lead
+
+[Synth User]
+BasedOn=Synth Factory
+1=My Lead
+2=My Pad
+
+[Loop A]
+BasedOn=Loop B
+0=A
+
+[Loop B]
+BasedOn=Loop A
+1=B
+
+.Note Names
+
+[GM Drums]
+36=Kick
+38=Snare
+
+[Synth Kit]
+36=Boom
+37=Tss
+
+.Controller Names
+
+[Synth Controllers]
+74=Cutoff
+64=Sustain
+80=Chorus On/Off
+71=Resonance
+
+.RPN Names
+
+[Synth RPN]
+0=Pitch Bend Sensitivity
+
+.NRPN Names
+
+[Synth NRPN]
+1000=Filter Envelope
+
+.Instrument Definitions
+
+[General MIDI]
+
+[Synth]
+Patch[0]=Synth Factory
+Patch[128]=Synth User
+Patch[256]=Missing List
+Patch[*]=1..128
+Key[*,*]=GM Drums
+Key[128,2]=Synth Kit
+Drum[128,2]=1
+Control=Synth Controllers
+RPN=Synth RPN
+NRPN=Synth NRPN
+BankSelMethod=1
+
+[Looper]
+Patch[0]=Loop A

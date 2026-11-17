@@ -1,0 +1,7 @@
+// Test bank file
+5 Before Any Bank
+Bank 0 1 Factory B
+0 Init Patch
+1   Big   Pad
+Bank * * Any
+127 Last

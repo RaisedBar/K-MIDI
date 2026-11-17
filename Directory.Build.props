@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- MSBuild imports the first Directory.Build.props it finds in this folder or any parent.
+       This file stops that search, so settings meant for other projects in a parent folder
+       do not leak into the Visual Studio projects CMake generates.
+       Project settings come from CMakeLists.txt. -->
+</Project>

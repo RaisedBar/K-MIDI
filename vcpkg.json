@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "k-midi",
+  "version": "0.1.0",
+  "description": "Makes Native Instruments Kontrol S MK3 MIDI templates (.kmt) from Cakewalk .ins and Asp .toml instrument definitions",
+  "dependencies": [
+    "wxwidgets",
+    "nlohmann-json",
+    "tomlplusplus"
+  ],
+  "builtin-baseline": "ed8445dd2a9ba44e0e3ace4e952b2e33130082d9"
+}

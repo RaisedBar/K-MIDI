@@ -1,0 +1,22 @@
+; A second file: repeats General MIDI exactly, has a different Synth, and uses a patch list from a-synth.ins
+
+.Patch Names
+
+[General MIDI]
+0=Acoustic Grand Piano
+1=Bright Acoustic Piano
+2=Electric Grand Piano
+
+[Other Synth Sounds]
+5=Bell
+
+.Instrument Definitions
+
+[General MIDI]
+
+[Synth]
+Patch[0]=Other Synth Sounds
+
+[Borrower]
+Patch[0]=Synth Factory
+BankSelMethod=3
