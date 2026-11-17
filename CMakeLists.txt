@@ -102,3 +102,23 @@ elseif(APPLE)
 endif()
 
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT KMidi)
+
+# ---- Windows installer ----------------------------------------------------------------
+# `cmake --install` puts K-MIDI.exe in one folder with the DLLs it uses (from vcpkg) and the Visual C++ runtime,
+# and installer/make-installer.ps1 turns that folder into a setup program with Inno Setup.
+if(WIN32)
+    install(TARGETS KMidi
+        RUNTIME_DEPENDENCIES
+            DIRECTORIES $<TARGET_FILE_DIR:KMidi>
+            PRE_EXCLUDE_REGEXES "^api-ms-" "^ext-ms-"
+            POST_EXCLUDE_REGEXES "[/\\\\][Ss]ystem32[/\\\\]"
+        RUNTIME DESTINATION .
+    )
+    # The Visual C++ runtime goes next to the program, so users don't have to install it separately.
+    # The Universal CRT is part of Windows 10 and later.
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION .)
+    set(CMAKE_INSTALL_UCRT_LIBRARIES OFF)
+    include(InstallRequiredSystemLibraries)
+
+    configure_file(installer/K-MIDI.iss.in ${CMAKE_BINARY_DIR}/K-MIDI.iss @ONLY)
+endif()

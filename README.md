@@ -7,6 +7,7 @@ It is built with wxWidgets using standard Windows controls, so it works with scr
 Narrator), and every command can be reached from the keyboard.
 
 - [What it reads](#what-it-reads)
+- [Installing](#installing)
 - [Building](#building)
 - [Running](#running)
 - [The window](#the-window)
@@ -34,6 +35,17 @@ Narrator), and every command can be reached from the keyboard.
 | Kontrol MIDI templates (`.kmt`) | A template made earlier, or made in Komplete Kontrol, to change and save again. |
 
 All four formats also read presets (banks and programs), but presets aren't written into templates yet.
+
+## Installing
+
+On 64-bit Windows 10 or 11, download `K-MIDI-<version>-setup.exe` from the
+[releases page](https://github.com/RaisedBar/K-MIDI/releases) and run it. It installs for all users, or, if you
+choose so or don't have administrator rights, just for you. It adds K-MIDI to the Start menu and to the "Open with"
+list for `.kmt`, `.ins`, `.toml` and `.reabank` files, without making it the default program for any of them.
+Remove it from Settings > Apps.
+
+The installer isn't code-signed yet, so Windows SmartScreen may say it doesn't recognise it. Choose More info, then
+Run anyway.
 
 ## Building
 
@@ -64,6 +76,29 @@ ctest --preset macos-tests
 ```
 
 The macOS version hasn't been built or tried with VoiceOver yet: see [Using K-MIDI on a Mac](#using-k-midi-on-a-mac).
+
+### Making the Windows installer
+
+The installer is made with [Inno Setup 6](https://jrsoftware.org/isinfo.php) (`winget install JRSoftware.InnoSetup`).
+In PowerShell, from the project folder:
+
+```
+.\installer\make-installer.ps1
+```
+
+This configures, builds Release, runs the tests, collects `K-MIDI.exe` with the DLLs it uses and the Visual C++
+runtime in `build/windows-vs2022/stage` (`cmake --install`), and makes
+`build/windows-vs2022/installer/K-MIDI-<version>-setup.exe`. The version comes from `project(... VERSION ...)` in
+`CMakeLists.txt`; change it there (and in `vcpkg.json`) before making a new release. The installer script is
+`installer/K-MIDI.iss.in`, which CMake fills in when it configures.
+
+To publish a release, tag it and attach the installer:
+
+```
+git tag v0.1.0
+git push origin v0.1.0
+gh release create v0.1.0 build\windows-vs2022\installer\K-MIDI-0.1.0-setup.exe --title "K-MIDI 0.1.0" --notes "..."
+```
 
 ### After moving or renaming the project folder
 
@@ -529,6 +564,7 @@ src/app/             the wxWidgets program
   Announce_mac.mm    macOS: VoiceOver announcements and accessible names
   Announce_generic.cpp    other platforms: does nothing
 tests/               tests and their instrument files
+installer/           the Windows installer: Inno Setup script and the PowerShell script that builds it
 samples/kmt/         a template made by Komplete Kontrol, which the .kmt format was worked out from
 ```
 

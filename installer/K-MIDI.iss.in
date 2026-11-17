@@ -1,0 +1,71 @@
+; Inno Setup script for K-MIDI.
+; CMake fills in the @...@ values when it configures, writing build/windows-vs2022/K-MIDI.iss.
+; Build the installer with installer/make-installer.ps1 rather than compiling this file directly.
+
+#define AppName      "K-MIDI"
+#define AppVersion   "@PROJECT_VERSION@"
+#define AppPublisher "RaisedBar"
+#define AppURL       "https://github.com/RaisedBar/K-MIDI"
+#define AppExe       "K-MIDI.exe"
+#define StageDir     "@CMAKE_BINARY_DIR@\stage"
+#define OutputDir    "@CMAKE_BINARY_DIR@\installer"
+
+[Setup]
+; AppId identifies K-MIDI to Windows for upgrades and uninstalling. Never change it.
+AppId={{456F2AA5-F79D-4A6F-9184-E9AA658BAF3F}
+AppName={#AppName}
+AppVersion={#AppVersion}
+AppVerName={#AppName} {#AppVersion}
+AppPublisher={#AppPublisher}
+AppPublisherURL={#AppURL}
+AppSupportURL={#AppURL}/issues
+AppUpdatesURL={#AppURL}/releases
+DefaultDirName={autopf}\{#AppName}
+DefaultGroupName={#AppName}
+DisableProgramGroupPage=yes
+UninstallDisplayIcon={app}\{#AppExe}
+UninstallDisplayName={#AppName}
+VersionInfoVersion={#AppVersion}
+; 64-bit only
+ArchitecturesAllowed=x64compatible
+ArchitecturesInstallIn64BitMode=x64compatible
+MinVersion=10.0
+; Installs for all users by default; users without administrator rights can choose to install just for themselves
+PrivilegesRequired=admin
+PrivilegesRequiredOverridesAllowed=dialog commandline
+OutputDir={#OutputDir}
+OutputBaseFilename=K-MIDI-{#AppVersion}-setup
+Compression=lzma2
+SolidCompression=yes
+WizardStyle=modern
+CloseApplications=yes
+
+[Languages]
+Name: "english"; MessagesFile: "compiler:Default.isl"
+
+[Tasks]
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+
+[Files]
+Source: "{#StageDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+
+[Icons]
+Name: "{autoprograms}\{#AppName}"; Filename: "{app}\{#AppExe}"
+Name: "{autoprograms}\{#AppName} documentation"; Filename: "{#AppURL}#readme"
+Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#AppExe}"; Tasks: desktopicon
+
+[Registry]
+; Lists K-MIDI under "Open with" for the files it reads, without making it the default program for any of them.
+Root: HKA; Subkey: "Software\Classes\Applications\{#AppExe}"; ValueType: string; ValueName: "FriendlyAppName"; ValueData: "{#AppName}"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\Applications\{#AppExe}\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#AppExe}"" ""%1"""
+Root: HKA; Subkey: "Software\Classes\Applications\{#AppExe}\SupportedTypes"; ValueType: string; ValueName: ".kmt"; ValueData: ""
+Root: HKA; Subkey: "Software\Classes\Applications\{#AppExe}\SupportedTypes"; ValueType: string; ValueName: ".ins"; ValueData: ""
+Root: HKA; Subkey: "Software\Classes\Applications\{#AppExe}\SupportedTypes"; ValueType: string; ValueName: ".toml"; ValueData: ""
+Root: HKA; Subkey: "Software\Classes\Applications\{#AppExe}\SupportedTypes"; ValueType: string; ValueName: ".reabank"; ValueData: ""
+Root: HKA; Subkey: "Software\Classes\.kmt\OpenWithList\{#AppExe}"; ValueType: none; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\.ins\OpenWithList\{#AppExe}"; ValueType: none; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\.toml\OpenWithList\{#AppExe}"; ValueType: none; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\.reabank\OpenWithList\{#AppExe}"; ValueType: none; Flags: uninsdeletekey
+
+[Run]
+Filename: "{app}\{#AppExe}"; Description: "{cm:LaunchProgram,{#AppName}}"; Flags: nowait postinstall skipifsilent
