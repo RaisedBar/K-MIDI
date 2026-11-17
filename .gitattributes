@@ -1,0 +1,6 @@
+# Kontrol MIDI templates are kept byte for byte as Komplete Kontrol writes them, with Windows (CRLF) line
+# endings, which the tests compare K-MIDI's own templates against. Git mustn't change their line endings.
+*.kmt -text
+
+# Shell scripts need Unix line endings to run on a Mac
+*.sh text eol=lf

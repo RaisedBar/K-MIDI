@@ -52,6 +52,17 @@ the "Open with" list.
 K-MIDI isn't code-signed yet, so Windows SmartScreen may say it doesn't recognise the installer or the program.
 Choose More info, then Run anyway.
 
+### On a Mac
+
+On macOS 11 or later, download `K-MIDI-<version>-mac.zip`, unzip it (double-click it in Finder) and move
+`K-MIDI.app` to your Applications folder, or anywhere else. It runs on Apple Silicon and Intel Macs. It keeps no
+settings, so to remove it, move it to the Bin. See [Using K-MIDI on a Mac](#using-k-midi-on-a-mac) for what's
+different on a Mac.
+
+K-MIDI isn't signed with an Apple Developer ID or notarised yet, so the first time you open it macOS says it can't
+check it for malicious software and won't open it. Choose Done, then open System Settings > Privacy & Security,
+find the message about K-MIDI near the bottom and choose Open Anyway. You only need to do this once.
+
 ## Building
 
 You need:
@@ -80,7 +91,8 @@ cmake --build --preset macos-release
 ctest --preset macos-tests
 ```
 
-The macOS version hasn't been built or tried with VoiceOver yet: see [Using K-MIDI on a Mac](#using-k-midi-on-a-mac).
+That builds for the Mac's own processor. The macOS version hasn't been tried with VoiceOver yet: see
+[Using K-MIDI on a Mac](#using-k-midi-on-a-mac).
 
 ### Making the Windows installer and portable zip
 
@@ -98,13 +110,39 @@ runtime in `build/windows-vs2022/stage` (`cmake --install`), and makes
 `CMakeLists.txt`; change it there (and in `vcpkg.json`) before making a new release. The installer script is
 `installer/K-MIDI.iss.in`, which CMake fills in when it configures.
 
-To publish a release, tag it and attach the installer and the portable zip:
+### Making the Mac app
+
+On a Mac with Xcode, CMake and vcpkg, from the project folder:
+
+```
+installer/make-mac-portable.sh
+```
+
+This builds Release twice, for Apple Silicon and for Intel (presets `macos-arm64` and `macos-x64`, which use the
+vcpkg triplets in `triplets/` so the libraries also work on macOS 11), and runs the tests. It then joins the two
+into one universal `K-MIDI.app`, signs it ad hoc and zips it as `build/macos/K-MIDI-<version>-mac.zip`. The libraries
+are linked statically, so the app has nothing else to install.
+
+You don't need a Mac for this: GitHub Actions runs the same script (`.github/workflows/mac.yml`) on every push.
+Download the zip from the run's page on the [Actions tab](https://github.com/RaisedBar/K-MIDI/actions), under
+Artifacts. GitHub puts it in a zip of its own, so unzip that first. With the `gh` command:
+
+```
+gh run download --name K-MIDI-mac
+```
+
+### Publishing a release
+
+Tag the release and attach the Windows installer, the Windows portable zip and the Mac zip:
 
 ```
 git tag v0.1.0
 git push origin v0.1.0
-gh release create v0.1.0 build\windows-vs2022\installer\K-MIDI-0.1.0-setup.exe build\windows-vs2022\installer\K-MIDI-0.1.0-portable.zip --title "K-MIDI 0.1.0" --notes "..."
+gh release create v0.1.0 build\windows-vs2022\installer\K-MIDI-0.1.0-setup.exe build\windows-vs2022\installer\K-MIDI-0.1.0-portable.zip K-MIDI-0.1.0-mac.zip --title "K-MIDI 0.1.0" --notes "..."
 ```
+
+Pushing the tag also runs the Mac build. When it finishes, download `K-MIDI-0.1.0-mac.zip` from it as above
+before running `gh release create`, or add it afterwards with `gh release upload v0.1.0 K-MIDI-0.1.0-mac.zip`.
 
 ### After moving or renaming the project folder
 
@@ -523,7 +561,10 @@ Other things to know on a Mac:
 `KMIDI_TABLE_USE_DATAVIEW=ON`: moving controls, undoing and redoing, and saving templates. The VoiceOver code
 (`Announce_mac.mm`) follows code already used with VoiceOver in another wxWidgets program.
 
-**What hasn't been checked:** K-MIDI hasn't been built on a Mac or used with VoiceOver. When it is, check that
+K-MIDI builds on macOS and its tests pass there, for both Apple Silicon and Intel: GitHub Actions checks this on
+every push (see [Making the Mac app](#making-the-mac-app)).
+
+**What hasn't been checked:** K-MIDI hasn't been used on a Mac or with VoiceOver. When it is, check that
 VoiceOver reads the lists' rows, the fields' names and the announcements, and that Option+Left/Right move a
 control in the template controls list.
 
@@ -544,7 +585,7 @@ control in the template controls list.
   so edit any that are too long.
 - Switching a control between knob and button resets its range and behaviour.
 - Opening an instrument replaces the open template with an automatic layout.
-- The Mac version hasn't been built or tried with VoiceOver yet (see
+- The Mac version builds and passes its tests, but hasn't been tried on a Mac or with VoiceOver yet (see
   [Using K-MIDI on a Mac](#using-k-midi-on-a-mac)).
 
 ## Source code
@@ -570,7 +611,10 @@ src/app/             the wxWidgets program
   Announce_mac.mm    macOS: VoiceOver announcements and accessible names
   Announce_generic.cpp    other platforms: does nothing
 tests/               tests and their instrument files
-installer/           the Windows installer and portable zip: Inno Setup script and the PowerShell script that builds them
+installer/           the Windows installer and portable zip (Inno Setup script, make-installer.ps1), and the
+                     Mac app (make-mac-portable.sh)
+triplets/            vcpkg settings for the Mac libraries: static, for macOS 11 and later
+.github/workflows/   the Mac build on GitHub Actions
 samples/kmt/         a template made by Komplete Kontrol, which the .kmt format was worked out from
 ```
 
