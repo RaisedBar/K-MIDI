@@ -1,0 +1,42 @@
+# Builds and tests the Mac version and makes the portable K-MIDI-<version>-mac.zip (installer/make-mac-portable.sh).
+# The zip is kept as a download on each run's page under Artifacts.
+name: Mac build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  mac:
+    runs-on: macos-15
+    timeout-minutes: 120
+    env:
+      VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+    steps:
+      - uses: actions/checkout@v4
+
+      # vcpkg needs its full history to find the builtin-baseline commit in vcpkg.json
+      - name: Get vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg "$VCPKG_ROOT"
+          "$VCPKG_ROOT/bootstrap-vcpkg.sh" -disableMetrics
+
+      # Keeps the libraries vcpkg builds (wxWidgets takes a while) between runs
+      - name: Cache vcpkg packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/vcpkg/archives
+          key: vcpkg-macos-${{ hashFiles('vcpkg.json', 'triplets/*.cmake') }}
+          restore-keys: vcpkg-macos-
+
+      - name: Build, test and package
+        run: installer/make-mac-portable.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: K-MIDI-mac
+          path: build/macos/K-MIDI-*-mac.zip
+          if-no-files-found: error

@@ -17,6 +17,28 @@
       "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Darwin" }
     },
     {
+      "name": "macos-arm64",
+      "displayName": "macOS - Apple Silicon release build",
+      "description": "Used by installer/make-mac-portable.sh",
+      "inherits": "macos-xcode",
+      "cacheVariables": {
+        "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/triplets",
+        "VCPKG_TARGET_TRIPLET": "arm64-osx-kmidi",
+        "CMAKE_OSX_ARCHITECTURES": "arm64"
+      }
+    },
+    {
+      "name": "macos-x64",
+      "displayName": "macOS - Intel release build",
+      "description": "Used by installer/make-mac-portable.sh",
+      "inherits": "macos-xcode",
+      "cacheVariables": {
+        "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/triplets",
+        "VCPKG_TARGET_TRIPLET": "x64-osx-kmidi",
+        "CMAKE_OSX_ARCHITECTURES": "x86_64"
+      }
+    },
+    {
       "name": "windows-vs2022",
       "displayName": "Windows - Visual Studio 2022 (x64)",
       "description": "Generates build/windows-vs2022/KMidi.sln",

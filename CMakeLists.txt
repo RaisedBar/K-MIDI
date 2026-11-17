@@ -94,7 +94,7 @@ elseif(APPLE)
     target_link_libraries(KMidi PRIVATE "-framework AppKit")
     set_target_properties(KMidi PROPERTIES
         MACOSX_BUNDLE_BUNDLE_NAME "K-MIDI"
-        MACOSX_BUNDLE_GUI_IDENTIFIER "com.example.k-midi"   # change to your own before distributing
+        MACOSX_BUNDLE_GUI_IDENTIFIER "io.github.raisedbar.k-midi"
         MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
         MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
         XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "-"   # ad-hoc signing for local builds
